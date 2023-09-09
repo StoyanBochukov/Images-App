@@ -32,29 +32,15 @@ const ImageScreen = () => {
         <Col md={3}>
           <ListGroup variant='flush'>
             <ListGroup.Item>
-              <h3>{image.name}</h3>
+              <h3><strong>{image.name}</strong></h3>
             </ListGroup.Item>
             <ListGroup.Item>
-              {image.price}
+              {image.title}
             </ListGroup.Item>
             <ListGroup.Item>
               Description: {image.description}
             </ListGroup.Item>
           </ListGroup>
-        </Col>
-        <Col md={3}>
-          <Card>
-            <ListGroup variant='flush'>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Price:</Col>
-                  <Col>
-                    <strong>${image.price}</strong>
-                  </Col>
-                </Row>
-              </ListGroup.Item>
-            </ListGroup>
-          </Card>
         </Col>
       </Row>
     </>
