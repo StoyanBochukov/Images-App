@@ -8,7 +8,6 @@ const ImageScreen = () => {
 
   const { id: imageId } = useParams();
   const [image, setImage] = useState({});
-  console.log(imageId);
 
   useEffect(() => {
     const getImage = async () => {
