@@ -11,8 +11,17 @@ const getImageById = async(imageId) => {
     return data;
 };
 
+const createComment = async(comment, imageId) => {
+    console.log('imageService - commentData!!', comment)
+    console.log('Image ID!!', imageId);
+    console.log(typeof imageId);
+    const { data } = await axios.post(`${API_URL}/${imageId}/comments`, {comment: comment});
+    return data;
+}
+
 const imageService = {
     getImages,
-    getImageById
+    getImageById,
+    createComment
 };
 export default imageService;

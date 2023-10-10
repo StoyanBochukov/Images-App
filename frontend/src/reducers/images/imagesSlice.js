@@ -3,7 +3,9 @@ import imageService from "./imagesService";
 
 const initialState  = {
     images: [],
-    image: {},
+    image:{
+        comments: ''
+    },
     isLoading: false,
     isError: false,
     isSuccess: false,
@@ -30,6 +32,20 @@ export const getImageById = createAsyncThunk('images/getOne', async(imageId, thu
 
         return thunkAPI.rejectWithValue(message);
     };
+});
+
+export const createComment = createAsyncThunk('images/comments', async({comment, imageId}, thunkAPI) => {
+    console.log('imageSlice - comment from the function', comment);
+    console.log('Image ID', imageId);
+    console.log(typeof imageId);
+    try {
+        return await imageService.createComment(comment, imageId);
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) ||
+        error.message || error.toString();
+
+        return thunkAPI.rejectWithValue(message);
+    }
 });
 
 const imageSlice = createSlice({
@@ -71,6 +87,22 @@ const imageSlice = createSlice({
             state.isSuccess = false
             state.isError = true
             state.image = {}
+            state.message = action.payload
+        })
+        .addCase(createComment.pending, (state) => {
+            state.isLoading = true
+        })
+        .addCase(createComment.fulfilled, (state, action) => {
+            console.log('imageSlice action.payload!!', action.payload);
+            state.isLoading = false
+            state.isSuccess = true
+            state.image.comments = action.payload
+        })
+        .addCase(createComment.rejected, (state, action) => {
+            state.isSuccess = false
+            state.isLoading = false
+            state.isError = true
+            state.image.comments = {}
             state.message = action.payload
         })
     }
