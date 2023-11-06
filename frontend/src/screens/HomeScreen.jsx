@@ -1,20 +1,23 @@
-import React, { useEffect } from 'react';
+// import React, { useEffect } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import Image from '../components/Image';
-import { getImages } from '../reducers/images/imagesSlice';
-import { useSelector, useDispatch } from 'react-redux';
+// import { getImages } from '../reducers/images/imagesSlice';
+// import { useSelector, useDispatch } from 'react-redux';
 import Loader from '../components/Loader'
+import { useGetImagesQuery } from '../reducers/images/imagesSlice';
 
 
 const HomeScreen = () => {
 
-  const dispatch = useDispatch();
-  const { images, isLoading } = useSelector(state => state.images)
+  // const dispatch = useDispatch();
+  // const { images, isLoading } = useSelector(state => state.images)
 
 
-  useEffect(() => {
-    dispatch(getImages())
-  }, [dispatch])
+  // useEffect(() => {
+  //   dispatch(getImages())
+  // }, [dispatch])
+
+  const { data:images, isLoading } = useGetImagesQuery();
 
   return (
     <>

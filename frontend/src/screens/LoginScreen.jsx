@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import FormContainer from '../components/FormContainer';
 import { toast } from 'react-toastify'
-import { login, reset } from '../reducers/auth/authSlice';
+import { setCredentials } from '../reducers/auth/authSlice'
+import { useUserLoginMutation } from '../reducers/usersApiSlice';
+import Loader from '../components/Loader';
 
 const LoginScreen = () => {
 
@@ -17,17 +19,18 @@ const LoginScreen = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { user, isSuccess, isError, message } = useSelector(state => state.auth);
+    const [ userLogin, {isLoading} ] = useUserLoginMutation()
+    const { user } = useSelector(state => state.auth)
+
+    const { search } = useLocation()
+    const sp = new URLSearchParams(search);
+    const redirect = sp.get('redirect') || '/';
 
     useEffect(() => {
-        if(isError){
-            toast.error(message)
-        }
-        if(isSuccess || user){
-            navigate('/');
-        }
-        dispatch(reset())
-    }, [dispatch, navigate, isSuccess, isError, message, user])
+      if(user){
+        navigate('/')
+      }
+    }, [user, navigate])
 
     const onChange = (e) => {
         setLoginData((prevState) => ({
@@ -36,7 +39,7 @@ const LoginScreen = () => {
         }));
     };
 
-    const formSubmit = (e) => {
+    const formSubmit = async (e) => {
         e.preventDefault();
         if(email === ''|| password === ''){
             toast.error('Please enter email and password')
@@ -45,7 +48,13 @@ const LoginScreen = () => {
                 email,
                 password
             };
-            dispatch(login(userData));
+           try {
+            const res = await userLogin({userData}).unwrap()
+            dispatch(setCredentials({...res}))
+            navigate('/')
+           } catch (error) {
+            toast.error('Invalid Credentials')
+           }
         }
     }
 
@@ -66,6 +75,7 @@ const LoginScreen = () => {
             </Form.Group>
 
             <Button className='mt-4' type='submit' variant='primary'>Sing In</Button>
+            {isLoading && <Loader />}
         </Form>
 
         <Row className='py-3'>

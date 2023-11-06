@@ -4,7 +4,8 @@ import { toast } from 'react-toastify'
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import FormContainer from '../components/FormContainer';
-import { register, reset } from '../reducers/auth/authSlice';
+import { useUserRegisterMutation } from '../reducers/usersApiSlice';
+import { setCredentials } from '../reducers/auth/authSlice';
 
 
 
@@ -21,17 +22,8 @@ const RegisterScreen = () => {
     const { firstName, lastName, email, password, confirmPassword } = formData;
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { user, isError, isSuccess, message } = useSelector(state => state.auth);
-
-    useEffect(() => {
-        if(isError){
-            toast.error(message)
-        }
-        if(isSuccess || user){
-            navigate('/')
-        }
-        dispatch(reset())
-    }, [isError, isSuccess, message, user, navigate, dispatch]);
+    const [userRegister] = useUserRegisterMutation()
+    const { user } = useSelector(state => state.auth);
 
     const onChange = (e) => {
         setFormData((prevState) => ({
@@ -40,7 +32,7 @@ const RegisterScreen = () => {
         }));
     };
 
-    const formSubmit = (e) => {
+    const formSubmit = async(e) => {
         e.preventDefault();
         if(firstName === '' || lastName === '' || email === '' || password === '' || confirmPassword === ''){
             toast.error('Please fill all fields')
@@ -54,7 +46,14 @@ const RegisterScreen = () => {
                 email,
                 password
             };
-            dispatch(register(userData));
+            try {
+                const res = await userRegister({userData}).unwrap()
+                dispatch(setCredentials({...res}))
+                navigate('/')
+            } catch (error) {
+                console.log(error);
+            }
+            
         }
        
     }

@@ -2,9 +2,10 @@ import React from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { FaUser, FaImages, FaPhone, FaHome, FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
-import { logout, reset } from '../reducers/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { useUserLogoutMutation } from '../reducers/usersApiSlice';
+import { logout } from '../reducers/auth/authSlice';
 
 
 const Header = () => {
@@ -12,12 +13,18 @@ const Header = () => {
   const { user } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [userLogout] = useUserLogoutMutation()
 
-  const logoutHandler = () => {
-    dispatch(logout());
-    dispatch(reset());
-    navigate('/');
+  const logoutHandler = async () => {
+    try {
+      await userLogout().unwrap()
+      dispatch(logout())
+      navigate('/')
+    } catch (error) {
+      console.log(error);
+    }
   }
+
 
   return (
     <header>

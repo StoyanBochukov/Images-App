@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Row, Col, Image, ListGroup, Form, Button } from 'react-bootstrap';
-import { getImageById, createComment } from '../reducers/images/imagesSlice';
+// import { getImageById, createComment } from '../reducers/images/imagesSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader';
+import { useGetImageByIdQuery } from '../reducers/images/imagesSlice';
 
 const ImageScreen = () => {
 
@@ -18,29 +19,15 @@ const ImageScreen = () => {
         [e.target.name]: e.target.value,
     }));
 };
+const { user } = useSelector(state => state.auth)
+const { data: image, isLoading } = useGetImageByIdQuery(imageId);
 
-  const dispatch = useDispatch();
-  const { image, isLoading } = useSelector(state => state.images);
-  const { user } = useSelector(state => state.auth);
-
-  useEffect(() => {
-    dispatch(getImageById(imageId))
-  }, [dispatch, imageId])
+  
+console.log(image)
 
   const onCommentCreate = (e) => {
     e.preventDefault();
-    if(comment === ''){
-      return
-    }else{
-      const commentData = {
-        comment,
-        imageId
-      }
-      dispatch(createComment(commentData));
-      console.log('ImageScreen - commentData!!', commentData);
-      console.log('Image ID!!', imageId);
-      console.log(typeof imageId);
-    }
+  
   }
 
   return (
