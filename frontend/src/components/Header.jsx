@@ -59,7 +59,7 @@ const Header = () => {
                 </LinkContainer>
 
                   {user && (
-                    <LinkContainer to='/profile'>
+                    <LinkContainer to='/users/profile'>
                       <Nav.Link><FaUser/> Profile</Nav.Link>
                     </LinkContainer>
                   )}

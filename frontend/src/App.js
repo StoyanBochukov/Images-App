@@ -7,6 +7,9 @@ import HomeScreen from './screens/HomeScreen'
 import ImageScreen from './screens/ImageScreen'
 import LoginScreen from './screens/LoginScreen'
 import RegisterScreen from './screens/RegisterScreen'
+import PrivateRoute from './components/PrivateRoute'
+import AdminRoute from './components/AdminRoute'
+import ProfileScreen from './screens/ProfileScreen'
 
 const App = () => {
   return (
@@ -21,6 +24,10 @@ const App = () => {
             <Route path='/images/:id' element={<ImageScreen />} />
             <Route path='/users/login' element={<LoginScreen />} />
             <Route path='/users/register' element={<RegisterScreen />} />
+
+            <Route path='' element={<PrivateRoute />} >
+              <Route path='/users/profile' element={<ProfileScreen />} />
+            </Route>
           </Routes>
 
         </Container>
