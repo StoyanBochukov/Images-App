@@ -3,8 +3,9 @@ import { Table, Form, Button, Row, Col, FormGroup } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
 import Loader from '../components/Loader'
-import { useUserProfileMutation } from '../reducers/usersApiSlice'
+import { useUpdateUserProfileMutation } from '../reducers/usersApiSlice'
 import { setCredentials } from '../reducers/auth/authSlice'
+import { toast } from 'react-toastify'
 
 const ProfileScreen = () => {
 
@@ -18,16 +19,16 @@ const ProfileScreen = () => {
     const { firstName, lastName, email, password, confirmPassword } = formData
     const dispatch = useDispatch()
     const { user } = useSelector(state => state.auth)
+    const [updateProfile, {isLoading: loadingUpdateProfile}] = useUpdateUserProfileMutation()
 
     useEffect(() => {
         if(user) {
            setFormData({
             firstName: user.firstName,
             lastName: user.lastName,
-            email: user.email
            })
         }
-    }, [user.firstName, user.lastName, user.email])
+    }, [user, user.firstName, user.lastName])
 
     const onChange = (e) => {
         setFormData((prevState) => ({
@@ -36,15 +37,32 @@ const ProfileScreen = () => {
         }))
     }
 
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault()
+        if(password !== confirmPassword){
+            toast.error('Passwords do not match')
+        }else{
+            try {
+                const userData = {
+                    _id: user._id,
+                    firstName,
+                    lastName,
+                    email,
+                    password
+                }
+                const res = await updateProfile(userData).unwrap();
+                dispatch(setCredentials(res))
+            } catch (error) {
+                console.log(error)
+            }
+        }
     }
 
   return (
    <Row>
     <Col md={3}>
         <h2>User Profile</h2>
-        <Form>
+        <Form onSubmit={submitHandler}>
             <Form.Group controlId='firstName'>
                 <Form.Label>First Name</Form.Label>
                 <Form.Control type='name' placeholder='First Name'
@@ -74,6 +92,9 @@ const ProfileScreen = () => {
                 <Form.Control type='password' placeholder='Confirm Password'
                 value={confirmPassword} name='confirmPassword' onChange={onChange}></Form.Control>
             </Form.Group>
+
+            <Button type='submit' variant='primary' className='my-4'>Update</Button>
+            { loadingUpdateProfile && <Loader /> }
         </Form>
     </Col>
     <Col md={9}>Column</Col>
