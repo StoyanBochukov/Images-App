@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Row, Col, Image, ListGroup, Form, Button } from 'react-bootstrap';
-// import { getImageById, createComment } from '../reducers/images/imagesSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader';
-import { useGetImageByIdQuery } from '../reducers/images/imagesSlice';
+import { useGetImageByIdQuery, useCreateCommentMutation } from '../reducers/images/imagesSlice';
 
 const ImageScreen = () => {
 
@@ -20,14 +19,25 @@ const ImageScreen = () => {
     }));
 };
 const { user } = useSelector(state => state.auth)
-const { data: image, isLoading } = useGetImageByIdQuery(imageId);
+const { data: image, refetch, isLoading } = useGetImageByIdQuery(imageId);
+const [createComment, {isLoading: isCommentLoding}] = useCreateCommentMutation()
 
   
-console.log(image)
 
-  const onCommentCreate = (e) => {
+  const onCommentCreate = async (e) => {
     e.preventDefault();
-  
+    try {
+      await createComment({
+        imageId,
+        comment
+      }).unwrap()
+      refetch()
+      setCommentData({
+        comment: ''
+      })
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (

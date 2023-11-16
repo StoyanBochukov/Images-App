@@ -25,8 +25,8 @@ const createComment = asyncHandler(async (req, res) => {
     if(image){
         const newComment = {
             user: req.user._id,
-            comment: comment,
             name: req.user.firstName,
+            comment: comment,
         }
         image.comments.push(newComment)
         await image.save();

@@ -6,11 +6,11 @@ const commentSchema = mongoose.Schema({
         required: true,
         ref: 'User'
     },
-    comment: {
+    name: {
         type: String,
         required: true
     },
-    name: {
+    comment: {
         type: String,
         required: true
     },

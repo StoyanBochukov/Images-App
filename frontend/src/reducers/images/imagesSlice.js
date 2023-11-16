@@ -127,8 +127,16 @@ export const imagesApiSlice = apiSlice.injectEndpoints({
             url: `${IMAGES_URL}/${imageId}`,
            }),
            keepUnusedDataFor: 5
+        }),
+        createComment: builder.mutation({
+            query:(comment) => ({
+                url: `${IMAGES_URL}/${comment.imageId}/comments`,
+                method: 'POST',
+                body: comment,
+            }),
+            invalidatesTags: ['Image'],
         })
     }),
 });
 
-export const { useGetImagesQuery, useGetImageByIdQuery } = imagesApiSlice;
+export const { useGetImagesQuery, useGetImageByIdQuery, useCreateCommentMutation } = imagesApiSlice;
