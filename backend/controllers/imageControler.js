@@ -18,8 +18,6 @@ const getImageById = asyncHandler(async (req, res) => {
 
 const createComment = asyncHandler(async (req, res) => {
     const { comment } = req.body;
-    console.log(comment);
-    console.log(req.body);
     const image = await Image.findById(req.params.id);
 
     if(image){

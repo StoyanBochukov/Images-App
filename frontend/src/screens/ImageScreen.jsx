@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Row, Col, Image, ListGroup, Form, Button } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Loader from '../components/Loader';
 import { useGetImageByIdQuery, useCreateCommentMutation } from '../reducers/images/imagesSlice';
 
@@ -21,8 +21,6 @@ const ImageScreen = () => {
 const { user } = useSelector(state => state.auth)
 const { data: image, refetch, isLoading } = useGetImageByIdQuery(imageId);
 const [createComment, {isLoading: isCommentLoding}] = useCreateCommentMutation()
-
-  
 
   const onCommentCreate = async (e) => {
     e.preventDefault();
@@ -67,17 +65,19 @@ const [createComment, {isLoading: isCommentLoding}] = useCreateCommentMutation()
           </Col>
         </Row>
 
+        <Row>
+          <Col md={6}>
+           {image.comments.length === 0 && <div>No Reviews</div>}
+           <ListGroup variant='flush'>
+            {image.comments.map((comment) => (
+              <ListGroup.Item key={comment._id}>
+                <strong>{comment.name}</strong>
+                <p>{comment.createdAt.substring(0, 10)}</p>
+                <p>{comment.comment}</p>
+              </ListGroup.Item>
+            ))}
+           </ListGroup>
         {user && (
-           <Row>
-           <Col md={6}>
-
-              {/* <ListGroup.Item key={review._id}>
-                <strong>{review.name}</strong>
-                <Rating value={review.rating} />
-                <p>{review.createdAt.substring(0, 10)}</p>
-                <p>{review.comment}</p>
-              </ListGroup.Item> */}
-
              <ListGroup variant='flush'>
                <ListGroup.Item>
                  <h2>Write a comment</h2>
@@ -92,10 +92,9 @@ const [createComment, {isLoading: isCommentLoding}] = useCreateCommentMutation()
                    </Form>
                </ListGroup.Item>
              </ListGroup>
+        )}
            </Col>
          </Row>
-        )}
-       
       </>
       )}
      
